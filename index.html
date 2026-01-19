@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Jam Kerja Praktikum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: "⚙️";
+            font-size: 24px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-card.asisten {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .result-card.dosen {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+
+        .result-card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 18px;
+            color: #333;
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(0, 0, 0, 0.2);
+        }
+
+        .result-label {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .result-value {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Kalkulator Jam Kerja Praktikum</h1>
+            <p>Sistem Perhitungan Jam Kerja Asisten & Dosen Praktikum</p>
+        </div>
+
+        <div class="content">
+            <!-- Parameter Umum -->
+            <div class="section">
+                <div class="section-title">Parameter Umum</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Jam per Pertemuan</label>
+                        <input type="number" id="jamPertemuan" value="3" min="1" step="0.5">
+                    </div>
+                    <div class="input-group">
+                        <label>Sesi per Hari</label>
+                        <input type="number" id="sesiPerHari" value="4" min="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Hari per Minggu</label>
+                        <input type="number" id="hariPerMinggu" value="6" min="1" max="7">
+                    </div>
+                    <div class="input-group">
+                        <label>Jumlah Modul</label>
+                        <input type="number" id="jumlahModul" value="5" min="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Maksimum Pertemuan per Modul</label>
+                        <input type="number" id="maxPertemuan" value="16" min="1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameter Asisten -->
+            <div class="section">
+                <div class="section-title">Parameter Asisten</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Jumlah Asisten</label>
+                        <input type="number" id="jumlahAsisten" value="3" min="1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parameter Dosen -->
+            <div class="section">
+                <div class="section-title">Parameter Dosen</div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Jumlah Dosen</label>
+                        <input type="number" id="jumlahDosen" value="1" min="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Jam Pembuatan Modul per Modul</label>
+                        <input type="number" id="jamBuatModul" value="1" min="0" step="0.5">
+                    </div>
+                    <div class="input-group">
+                        <label>Jam Pemeriksaan Modul per Modul</label>
+                        <input type="number" id="jamPeriksaModul" value="1" min="0" step="0.5">
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="hitung()">🧮 Hitung Jam Kerja</button>
+
+            <!-- Results -->
+            <div id="results" class="results hidden">
+                <!-- Hasil Asisten -->
+                <div class="result-card asisten">
+                    <h3>👨‍🏫 Hasil Perhitungan Asisten</h3>
+                    <div class="result-item">
+                        <span class="result-label">Pertemuan per Modul:</span>
+                        <span class="result-value" id="pertemuanPerModul">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Pertemuan:</span>
+                        <span class="result-value" id="totalPertemuan">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Jam Asisten:</span>
+                        <span class="result-value" id="totalJamAsisten">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Jam per Asisten:</span>
+                        <span class="result-value" id="jamPerAsisten">-</span>
+                    </div>
+                </div>
+
+                <!-- Hasil Dosen -->
+                <div class="result-card dosen">
+                    <h3>👨‍🎓 Hasil Perhitungan Dosen</h3>
+                    <div class="result-item">
+                        <span class="result-label">Jam Praktikum (Tatap Muka):</span>
+                        <span class="result-value" id="jamPraktikumDosen">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Jam Pembuatan Modul:</span>
+                        <span class="result-value" id="jamPembuatanModul">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Jam Pemeriksaan Modul:</span>
+                        <span class="result-value" id="jamPemeriksaanModul">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Total Jam Semua Dosen:</span>
+                        <span class="result-value" id="totalJamDosen">-</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Jam per Dosen:</span>
+                        <span class="result-value" id="jamPerDosen">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function hitung() {
+            // Ambil input
+            const jamPertemuan = parseFloat(document.getElementById('jamPertemuan').value);
+            const sesiPerHari = parseInt(document.getElementById('sesiPerHari').value);
+            const hariPerMinggu = parseInt(document.getElementById('hariPerMinggu').value);
+            const jumlahModul = parseInt(document.getElementById('jumlahModul').value);
+            const maxPertemuan = parseInt(document.getElementById('maxPertemuan').value);
+            const jumlahAsisten = parseInt(document.getElementById('jumlahAsisten').value);
+            const jumlahDosen = parseInt(document.getElementById('jumlahDosen').value);
+            const jamBuatModul = parseFloat(document.getElementById('jamBuatModul').value);
+            const jamPeriksaModul = parseFloat(document.getElementById('jamPeriksaModul').value);
+
+            // Perhitungan Pertemuan
+            const pertemuanPerModul = Math.min(sesiPerHari * hariPerMinggu, maxPertemuan);
+            const totalPertemuan = pertemuanPerModul * jumlahModul;
+
+            // Perhitungan Jam Asisten
+            const totalJamAsisten = totalPertemuan * jamPertemuan;
+            const jamPerAsisten = totalJamAsisten / jumlahAsisten;
+
+            // Perhitungan Jam Dosen
+            const jamPraktikumDosen = totalPertemuan * jamPertemuan;
+            const jamPembuatanModul = jumlahModul * jamBuatModul;
+            const jamPemeriksaanModul = jumlahModul * jamPeriksaModul;
+            const totalJamDosen = jamPraktikumDosen + jamPembuatanModul + jamPemeriksaanModul;
+            const jamPerDosen = totalJamDosen / jumlahDosen;
+
+            // Tampilkan hasil
+            document.getElementById('pertemuanPerModul').textContent = pertemuanPerModul + ' kali';
+            document.getElementById('totalPertemuan').textContent = totalPertemuan + ' kali';
+            document.getElementById('totalJamAsisten').textContent = totalJamAsisten.toFixed(2) + ' jam';
+            document.getElementById('jamPerAsisten').textContent = jamPerAsisten.toFixed(2) + ' jam';
+            
+            document.getElementById('jamPraktikumDosen').textContent = jamPraktikumDosen.toFixed(2) + ' jam';
+            document.getElementById('jamPembuatanModul').textContent = jamPembuatanModul.toFixed(2) + ' jam';
+            document.getElementById('jamPemeriksaanModul').textContent = jamPemeriksaanModul.toFixed(2) + ' jam';
+            document.getElementById('totalJamDosen').textContent = totalJamDosen.toFixed(2) + ' jam';
+            document.getElementById('jamPerDosen').textContent = jamPerDosen.toFixed(2) + ' jam';
+
+            // Tampilkan section hasil
+            document.getElementById('results').classList.remove('hidden');
+
+            // Scroll ke hasil
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Auto-calculate saat input berubah (opsional)
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                if (!document.getElementById('results').classList.contains('hidden')) {
+                    hitung();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

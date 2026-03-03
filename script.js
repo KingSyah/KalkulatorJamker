@@ -30,7 +30,7 @@ function syncPreview() {
     const apk    = int('hApK')  || 1;
     const tarMin = num('hTarMin');
     const tarMax = num('hTarMax');
-    const mSKS   = num('hMenit') || 45;
+    const mSKS   = ($('hMenit') ? num('hMenit') : num('s-menit')) || 45;
 
     const base = Math.floor(M / nK), sisa = M % nK;
 

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulator Honorarium Praktikum</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="header">
+    <h1>📊 Kalkulator Honorarium Praktikum</h1>
+    <p>Perhitungan Jam Kerja & Honorarium Asisten / Dosen Praktikum</p>
+    <div class="badges">
+        <span class="badge">S-1 &amp; D-3</span>
+        <span class="badge">Sesuai Formula Papan Tulis</span>
+        <span class="badge">Real-time Calculation</span>
+    </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+    <div class="tab active"  onclick="switchTab(this,'jam')">⏱ Jam Kerja</div>
+    <div class="tab"         onclick="switchTab(this,'honor')">💰 Honorarium Asisten</div>
+    <div class="tab"         onclick="switchTab(this,'setting')">⚙️ Pengaturan</div>
+</div>
+
+<!-- ══════════════════ TAB JAM KERJA ══════════════════ -->
+<div id="tab-jam" class="panel active">
+    <div class="card">
+        <div class="card-title"><span class="icon ib">🏫</span>Parameter Umum Praktikum</div>
+        <div class="g g3">
+            <div class="field"><label>Jam per Pertemuan</label><input type="number" id="jpm" value="3" min="0.5" step="0.5"><span class="hint">Durasi 1 sesi praktikum (jam)</span></div>
+            <div class="field"><label>Sesi per Hari</label><input type="number" id="sph" value="4" min="1"></div>
+            <div class="field"><label>Hari per Minggu</label><input type="number" id="hpm" value="6" min="1" max="7"></div>
+            <div class="field"><label>Jumlah Modul (Jm)</label><input type="number" id="jJm" value="6" min="1"></div>
+            <div class="field"><label>Maks. Pertemuan / Modul</label><input type="number" id="maxP" value="16" min="1"></div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="icon io">👨‍🏫</span>Parameter Asisten</div>
+        <div class="g g3">
+            <div class="field"><label>Jumlah Asisten (A)</label><input type="number" id="jA" value="3" min="1"><span class="hint">Total asisten yang bertugas</span></div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="icon ip">👨‍🎓</span>Parameter Dosen</div>
+        <div class="g g3">
+            <div class="field"><label>Jumlah Dosen</label><input type="number" id="jD" value="1" min="1"></div>
+            <div class="field"><label>Jam Buat Modul / Modul</label><input type="number" id="jBuat" value="1" min="0" step="0.5"></div>
+            <div class="field"><label>Jam Periksa Modul / Modul</label><input type="number" id="jPeriksa" value="1" min="0" step="0.5"></div>
+        </div>
+    </div>
+    <button class="btn btn-red" onclick="hitungJam()">🧮 Hitung Jam Kerja</button>
+    <div id="hasil-jam" class="hidden">
+        <div class="divider"></div>
+        <div class="rg">
+            <div class="rc rc-a">
+                <h3>🧑‍🏫 Jam Kerja Asisten</h3>
+                <div class="row"><span class="rl">Pertemuan / Modul</span><span class="rv" id="r-pm">-</span></div>
+                <div class="row"><span class="rl">Total Pertemuan</span><span class="rv" id="r-tp">-</span></div>
+                <div class="row"><span class="rl">Total Jam (semua asisten)</span><span class="rv" id="r-tja">-</span></div>
+                <div class="row tot"><span class="rl">Jam / Asisten</span><span class="rv big" id="r-jpa">-</span></div>
+            </div>
+            <div class="rc rc-d">
+                <h3>👨‍🎓 Jam Kerja Dosen</h3>
+                <div class="row"><span class="rl">Jam Tatap Muka</span><span class="rv" id="r-tm">-</span></div>
+                <div class="row"><span class="rl">Jam Buat Modul</span><span class="rv" id="r-bm">-</span></div>
+                <div class="row"><span class="rl">Jam Periksa Modul</span><span class="rv" id="r-pmx">-</span></div>
+                <div class="row"><span class="rl">Total Jam (semua dosen)</span><span class="rv" id="r-tjd">-</span></div>
+                <div class="row tot"><span class="rl">Jam / Dosen</span><span class="rv big" id="r-jpd">-</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════ TAB HONORARIUM ══════════════════ -->
+<div id="tab-honor" class="panel">
+
+    <div class="infobox">
+        <div class="it">ℹ️ Formula Sesuai Papan Tulis</div>
+        <div class="ib2">
+            <strong>Simbol:</strong> M = Mahasiswa, a = Mhs/Kelas, A = Asisten, Jm = Modul<br>
+            <strong>TA</strong> = (M ÷ a) × Jm  ← angka pembagi<br>
+            <strong>Honor per Asisten</strong> = Total Anggaran Honor ÷ TA<br>
+            <strong>S-1:</strong> TA=(240÷40)×6=36 → Rp 12.960.000 ÷ 36 = <strong>Rp 360.000/asisten</strong> &nbsp;|&nbsp;
+            <strong>D-3:</strong> TA=(40÷40)×6=6 → Rp 2.160.000 ÷ 6 = <strong>Rp 360.000/asisten</strong>
+        </div>
+    </div>
+
+    <!-- LANGKAH 1: DATA -->
+    <div class="card">
+        <div class="card-title"><span class="icon ib">👥</span>Langkah 1 — Data Mahasiswa & Modul</div>
+        <div class="g g3">
+            <div class="field">
+                <label>Total Mahasiswa (M)</label>
+                <input type="number" id="hM" value="240" min="1" oninput="syncPreview()">
+                <span class="hint">📌 Jumlah seluruh mahasiswa. Contoh S-1: 240, D-3: 40.</span>
+            </div>
+            <div class="field">
+                <label>Jumlah Kelas (= M ÷ a)</label>
+                <input type="number" id="hKelas" value="6" min="1" oninput="syncPreview()">
+                <span class="hint">📌 Mahasiswa dibagi berapa kelas? Contoh: 240÷40=6 kelas, atau 145÷5=29 mhs/kelas (5 kelas).</span>
+            </div>
+            <div class="field">
+                <label>Jumlah Modul (Jm)</label>
+                <input type="number" id="hJm" value="6" min="1" oninput="syncPreview()">
+                <span class="hint">📌 Berapa modul/topik diajarkan 1 semester.</span>
+            </div>
+        </div>
+        <div style="margin-top:14px;background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:14px 16px;">
+            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">📐 Preview Pembagian Kelas</div>
+            <div id="kelas-badges" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+            <div id="kelas-info" style="font-size:13px;color:#374151;line-height:1.8;"></div>
+        </div>
+    </div>
+
+    <!-- LANGKAH 2: ASISTEN -->
+    <div class="card">
+        <div class="card-title"><span class="icon io">🧑‍🏫</span>Langkah 2 — Jumlah Asisten (A)</div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+            <button id="btn-auto" class="tog on" onclick="setMode('auto')">🔄 Otomatis (dari jumlah kelas)</button>
+            <button id="btn-manual" class="tog" onclick="setMode('manual')">✏️ Manual (isi sendiri)</button>
+        </div>
+        <div id="panel-auto">
+            <div style="background:#f0faf6;border:2px dashed var(--green);border-radius:12px;padding:16px 20px;">
+                <div style="font-size:13px;color:#065f46;font-weight:600;margin-bottom:10px;">🔢 A = Jumlah Kelas × Asisten per Kelas</div>
+                <div class="g g2" style="margin-bottom:12px;">
+                    <div class="field">
+                        <label>Asisten per Kelas</label>
+                        <input type="number" id="hApK" value="1" min="1" oninput="syncPreview()">
+                        <span class="hint">📌 Berapa asisten per kelas. Umumnya 1 asisten untuk 1 kelas.</span>
+                    </div>
+                </div>
+                <div style="font-size:13px;color:#374151;">Hasil: <span id="rumus-auto" style="font-weight:700;color:var(--accent2);">6 kelas × 1 = <span style="color:var(--accent);">6 asisten</span></span></div>
+            </div>
+        </div>
+        <div id="panel-manual" class="hidden">
+            <div class="g g2">
+                <div class="field">
+                    <label>Jumlah Asisten (A) — manual</label>
+                    <input type="number" id="hAmanual" value="6" min="1" oninput="syncPreview()">
+                    <span class="hint">📌 Masukkan jumlah asisten aktual yang bertugas.</span>
+                </div>
+                <div style="display:flex;align-items:flex-end;padding-bottom:4px;">
+                    <div style="background:#fff3cd;border:1px solid var(--gold);border-radius:10px;padding:12px;font-size:12px;color:#856404;">
+                        ⚠️ Mode manual: asisten tidak dihitung ulang dari kelas.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LANGKAH 3: ANGGARAN -->
+    <div class="card">
+        <div class="card-title"><span class="icon ir">💵</span>Langkah 3 — Total Anggaran Honor MK Praktikum</div>
+        <div class="g g2">
+            <div class="field">
+                <label>Total Anggaran Batas Bawah (Rp)</label>
+                <input type="number" id="hTarMin" value="12960000" min="0" step="100000" oninput="syncPreview()">
+                <span class="hint">📌 Total anggaran honor minimum untuk seluruh praktikum 1 semester. Contoh S-1: Rp 12.960.000 | D-3: Rp 2.160.000</span>
+            </div>
+            <div class="field">
+                <label>Total Anggaran Batas Atas (Rp)</label>
+                <input type="number" id="hTarMax" value="16200000" min="0" step="100000" oninput="syncPreview()">
+                <span class="hint">📌 Total anggaran honor maksimum untuk seluruh praktikum 1 semester.</span>
+            </div>
+        </div>
+        <div class="fbox">
+            <div><span class="fl">Formula:</span> Honor per Asisten = Total Anggaran ÷ TA</div>
+            <div><span class="fl">TA</span> = (M ÷ a) × Jm → <span id="prev-ta" class="fg">—</span></div>
+            <div id="prev-min" style="color:#cbd5e1;">Batas Bawah = — </div>
+            <div id="prev-max" style="color:#cbd5e1;">Batas Atas &nbsp;= — </div>
+        </div>
+    </div>
+
+    <button class="btn btn-red" onclick="hitungHonor()">💰 Hitung Honorarium Sekarang</button>
+
+    <!-- HASIL HONOR -->
+    <div id="hasil-honor" class="hidden">
+        <div class="divider"></div>
+
+        <div class="card" style="border:2px solid var(--border);">
+            <div class="card-title"><span class="icon ib">🧮</span>Alur Perhitungan Langkah demi Langkah</div>
+            <div id="alur" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <!-- 3 KARTU ANGKA BESAR -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-top:20px;">
+            <div class="bigcard" style="background:linear-gradient(135deg,#0f3460,#1a1a2e);">
+                <div class="bc-label">Honor per Asisten — Batas Bawah</div>
+                <div class="bc-sub" style="color:var(--green);">📌 Anggaran Min (Rp <span id="lbl-tMin">—</span>) ÷ TA</div>
+                <div class="bc-val" style="color:var(--green);" id="big-totMin">—</div>
+                <div class="bc-formula" id="big-totMin-f">—</div>
+            </div>
+            <div class="bigcard" style="background:linear-gradient(135deg,#5c0099,#2d0050);">
+                <div class="bc-label">Honor per Asisten — Batas Atas</div>
+                <div class="bc-sub" style="color:var(--gold);">📌 Anggaran Maks (Rp <span id="lbl-tMax">—</span>) ÷ TA</div>
+                <div class="bc-val" style="color:var(--gold);" id="big-totMax">—</div>
+                <div class="bc-formula" id="big-totMax-f">—</div>
+            </div>
+            <div class="bigcard" style="background:linear-gradient(135deg,var(--accent),#c0392b);">
+                <div class="bc-label">Total Anggaran Honor MK</div>
+                <div class="bc-sub" style="color:#fff;">🔽 Minimum &nbsp;↔&nbsp; 🔼 Maksimum</div>
+                <div class="bc-val" style="font-size:20px;line-height:1.6;">
+                    <span id="big-paMin">—</span><br>
+                    <span style="font-size:12px;opacity:.7;">s/d</span><br>
+                    <span id="big-paMax">—</span>
+                </div>
+                <div class="bc-formula" id="big-pa-f">—</div>
+            </div>
+        </div>
+
+        <!-- Tabel rincian -->
+        <div class="rg">
+            <div class="rc rc-g">
+                <h3>📊 Rincian Total</h3>
+                <div class="row"><span class="rl">Jumlah Asisten (A)</span><span class="rv" id="hr-A">—</span></div>
+                <div class="row"><span class="rl">TA = (M÷a)×Jm  ← angka pembagi</span><span class="rv" id="hr-TA">—</span></div>
+                <div class="row"><span class="rl">Total Menit (TA × MenitSKS)</span><span class="rv" id="hr-menit">—</span></div>
+                <div class="row"><span class="rl">Total Menit (TA × MenitSKS)</span><span class="rv" id="hr-jam">—</span></div>
+                <div class="row tot"><span class="rl">💰 Total Honor (tarif bawah)</span><span class="rv big" id="hr-totMin">—</span></div>
+                <div class="row" style="padding-top:6px;"><span class="rl">💰 Total Honor (tarif atas)</span><span class="rv big" style="color:var(--gold);" id="hr-totMax">—</span></div>
+            </div>
+            <div class="rc rc-a">
+                <h3>👤 Rincian per Asisten</h3>
+                <div class="row"><span class="rl">Mahasiswa per Kelas (a = M÷Kelas)</span><span class="rv" id="hr-mhsKelas">—</span></div>
+                <div class="row"><span class="rl">Modul / Asisten (Jm)</span><span class="rv" id="hr-modPerA">—</span></div>
+                <div class="row"><span class="rl">Jam Kerja / Asisten (info)</span><span class="rv" id="hr-jamPA">—</span></div>
+                <div class="row"><span class="rl">Formula honor per asisten</span><span class="rv" id="hr-formula" style="font-size:11px;text-align:right;">—</span></div>
+                <div class="row"><span class="rl">🔽 Batas Bawah Honor / Asisten</span><span class="rv grn" id="hr-paMin">—</span></div>
+                <div class="row tot"><span class="rl">🔼 Batas Atas Honor / Asisten</span><span class="rv big" id="hr-paMax">—</span></div>
+            </div>
+        </div>
+
+        <!-- Rekomendasi -->
+        <div class="card" style="border:2px solid var(--gold);margin-top:4px;">
+            <div class="card-title" style="border-color:#fde8a0;"><span class="icon io">💡</span>Rekomendasi Jumlah Asisten</div>
+            <div id="rekomendasi"></div>
+        </div>
+
+        <!-- SUMMARY BAR -->
+        <div class="sumbar">
+            <div class="si"><div class="sl">Jumlah Asisten (A)</div><div class="sv" id="hs-A">—</div></div>
+            <div class="si"><div class="sl">Total TA (A × Jm)</div><div class="sv" id="hs-TA">—</div></div>
+            <div class="si"><div class="sl">Total Honor (tarif bawah)</div><div class="sv gold" id="hs-totMin">—</div></div>
+            <div class="si"><div class="sl">Honor / Asisten (rentang)</div><div class="sv gold" id="hs-perA">—</div></div>
+        </div>
+    </div>
+
+</div><!-- /tab-honor -->
+
+<!-- ══════════════════ TAB PENGATURAN ══════════════════ -->
+<div id="tab-setting" class="panel">
+    <div class="card">
+        <div class="card-title"><span class="icon ib">⚙️</span>Pengaturan Tarif Default</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Ubah nilai default dan klik Terapkan untuk sinkronisasi ke tab Honorarium.</p>
+        <div class="g g2">
+            <div class="field"><label>Tarif Bawah Default (Rp/jam)</label><input type="number" id="s-tMin" value="8000" step="500"></div>
+            <div class="field"><label>Tarif Atas Default (Rp/jam)</label><input type="number" id="s-tMax" value="10000" step="500"></div>
+            <div class="field"><label>Menit per SKS</label><input type="number" id="s-menit" value="45" min="1"></div>
+        </div>
+        <button class="btn btn-red" style="margin-top:16px;" onclick="terapkanSetting()">✅ Terapkan Pengaturan</button>
+        <div id="setting-ok" class="hidden" style="color:var(--green);font-weight:700;font-size:13px;margin-top:10px;">✔ Berhasil diterapkan!</div>
+    </div>
+    <div class="card">
+        <div class="card-title"><span class="icon ig">📖</span>Panduan Formula (Verifikasi dengan Papan Tulis)</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+            <div class="fbox">
+                <div><span class="fl">Simbol:</span> M = Total Mahasiswa, a = Mhs/Kelas, A = Jumlah Asisten, Jm = Jumlah Modul</div>
+                <div><span class="fl">TA</span> = (M ÷ a) × Jm  ← angka pembagi untuk honor per asisten</div>
+                <div><span class="fl">Honor/Asisten</span> = Total Anggaran ÷ TA</div>
+            </div>
+            <div class="fbox">
+                <div><span class="fl">S-1:</span> M=240, a=40, Jm=6, Anggaran=Rp 12.960.000</div>
+                <div>TA = (240÷40) × 6 = <span class="fg">36</span></div>
+                <div>Honor/asisten = 12.960.000 ÷ 36 = <span class="fr">Rp 360.000</span> ✓</div>
+            </div>
+            <div class="fbox">
+                <div><span class="fl">D-3:</span> M=40, a=40, Jm=6, Anggaran=Rp 2.160.000</div>
+                <div>TA = (40÷40) × 6 = <span class="fg">6</span></div>
+                <div>Honor/asisten = 2.160.000 ÷ 6 = <span class="fr">Rp 360.000</span> ✓</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- FOOTER -->
+<footer class="footer">
+    &copy; <span id="footer-year"></span> <span>Laboratorium Teknik Elektro dan Komputer</span>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
